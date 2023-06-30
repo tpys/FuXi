@@ -1,5 +1,8 @@
 ## FuXi
 
+[![DOI](https://sandbox.zenodo.org/badge/659994559.svg)](https://sandbox.zenodo.org/badge/latestdoi/659994559)
+
+
 This is the official repository for the FuXi paper.
 
 [FuXi: A cascade machine learning forecasting system for 15-day global weather forecast
