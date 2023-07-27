@@ -9,11 +9,6 @@ This is the official repository for the FuXi paper.
 by Lei Chen, Xiaohui Zhong, Feng Zhang, Yuan Cheng, Yinghui Xu, Yuan Qi, Hao Li
 
 
-## What's New
-  - Release of the ONNX model and inference code.
-  - Addition of new sample data (20210101).
-
-
 
 ## Installation
 
@@ -24,66 +19,38 @@ The downloaded files shall be organized as the following hierarchy:
 ```plain
 ├── root
 │   ├── data
-│   │    ├── 20180101
-│   │    │       ├── input.nc
-│   │    │       ├── output.nc
-│   │    │       
 │   │    ├── 20210101
-│   │            ├── input.nc
-│   │            ├── output.nc
-│   │            ├── target.nc
+│   │         ├── input.nc
+│   │         ├── output.nc
+│   │         ├── target.nc
 │   │   
-│   ├── model
-│   |   ├── buffer.st
-│   |   ├── fuxi_short.st
-│   |   ├── fuxi_medium.st
-│   |   ├── fuxi_long.st
-│   |   ├── onnx
-│   |        ├── short
-│   |        ├── short.onnx
-│   |        ├── medium
-│   |        ├── medium.onnx
-│   |        ├── long
-│   |        ├── long.onnx
+│   ├── fuxi
+│   |    ├── short
+│   |    ├── short.onnx
+│   |    ├── medium
+│   |    ├── medium.onnx
+│   |    ├── long
+│   |    ├── long.onnx
 |   |   
-│   ├── fuxi.py
-│   ├── fuxi_demo.ipynb
 │   ├── infernece_fuxi.py
 
 ```
 
-1. Install xarray.
+1. Install xarray 
 
+```bash
+conda install -c conda-forge xarray dask netCDF4 bottleneck
 ```
- conda install -c conda-forge xarray dask netCDF4 bottleneck
-```
-
 2. Install onnxruntime
-
-```
+```bash
 pip install -r requirement.txt
 ```
 
-3. (Optional) Install PyTorch and CUDA for inference with `pth` model
-
-
 ## Demo
 
-### Inferece with onnx (recommend)
-
-```python 
-python inference_fuxi.py --model model/onnx --input data/20210101/input.nc
+```bash 
+python inference_fuxi.py --model fuxi --input data/20210101/input.nc
 ```
-
-### Inferece with pytorch  
-
- The `fuxi_demo.ipynb` consists of multiple sections: 
-  1. Construct the Fuxi model. 
-  2. Load weights and buffers. 
-  3. Load the preprocessed input. 
-  4. Run inference for 15-day forecasting. 
-  5. Save the results. 
-  6. Visualization.
 
 
 ## Data preparation 
