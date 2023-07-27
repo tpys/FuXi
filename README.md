@@ -12,6 +12,12 @@ This is the official repository for the FuXi paper.
 by Lei Chen, Xiaohui Zhong, Feng Zhang, Yuan Cheng, Yinghui Xu, Yuan Qi, Hao Li
 
 
+## What's New
+  - Release of the ONNX model and inference code.
+  - Addition of new sample data (20210101).
+
+
+
 ## Installation
 
 The Google Drive folder contains the FuXi model, code, and sample input data, all of which are essential resources for this study. Access to these resources is restricted by a password-protected link. To obtain the password, users must complete the provided [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSfjwZLf6PmxRvRhIPMQ1WRLJ98iLxOq_0dXb87N8CFNPyYAGg/viewform?usp=sharing). For inquiries regarding the password, please contact Professor Li Hao at the email address: lihao_lh@fudan.edu.cn.
@@ -21,35 +27,58 @@ The downloaded files shall be organized as the following hierarchy:
 ```plain
 ├── root
 │   ├── data
-│   │   ├── input.nc
-│   │   ├── output.nc
+│   │    ├── 20180101
+│   │    │       ├── input.nc
+│   │    │       ├── output.nc
+│   │    │       
+│   │    ├── 20210101
+│   │            ├── input.nc
+│   │            ├── output.nc
+│   │            ├── target.nc
+│   │   
 │   ├── model
 │   |   ├── buffer.st
 │   |   ├── fuxi_short.st
 │   |   ├── fuxi_medium.st
 │   |   ├── fuxi_long.st
+│   |   ├── onnx
+│   |        ├── short
+│   |        ├── short.onnx
+│   |        ├── medium
+│   |        ├── medium.onnx
+│   |        ├── long
+│   |        ├── long.onnx
+|   |   
 │   ├── fuxi.py
 │   ├── fuxi_demo.ipynb
+│   ├── infernece_fuxi.py
 
 ```
 
-1. Install PyTorch and CUDA. Go to the official PyTorch website (https://pytorch.org/) and follow the installation instructions for Linux to install PyTorch.
-
-
-2. Install xarray, netCDF4, and cartopy.
+1. Install xarray.
 
 ```
-conda install xarray netCDF4 cartopy -c conda-forge
+ conda install -c conda-forge xarray dask netCDF4 bottleneck
 ```
 
-3. Finally, install any additional packages listed in the "requirement.txt" file using the following pip command:
+2. Install onnxruntime
 
 ```
 pip install -r requirement.txt
 ```
 
+3. (Optional) Install PyTorch and CUDA for inference with `pth` model
+
 
 ## Demo
+
+### Inferece with onnx (recommend)
+
+```python 
+python inference_fuxi.py --model model/onnx --input data/20210101/input.nc
+```
+
+### Inferece with pytorch  
 
  The `fuxi_demo.ipynb` consists of multiple sections: 
   1. Construct the Fuxi model. 
@@ -60,7 +89,7 @@ pip install -r requirement.txt
   6. Visualization.
 
 
-### Input preparation 
+## Data preparation 
 
 The `input.nc` file contains preprocessed data from the origin ERA5 files. The file has a shape of (2, 70, 721, 1440), where the first dimension represents two time steps. The second dimension represents all variable and level combinations, named in the following exact order:
 

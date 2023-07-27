@@ -1,4 +1,2 @@
-einops==0.6.1
-pandas==1.5.3
-matplotlib==3.7.1
-safetensors==0.3.1
+onnx==1.14.0
+onnxruntime-gpu==1.14.0
