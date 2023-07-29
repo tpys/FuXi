@@ -77,7 +77,8 @@ def save_like(output, data, step, save_dir="", freq=6, grid=0.25):
                 lat=lat,
                 lon=lon,
             )
-        )            
+        )  
+        output.name = 'data'
         save_name = os.path.join(save_dir, f'{lead_time:03d}.nc')
         output.to_netcdf(save_name)
 
