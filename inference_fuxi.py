@@ -8,14 +8,12 @@ import onnxruntime as ort
 
 ort.set_default_logger_severity(3)
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, required=True, help="FuXi onnx model dir")
 parser.add_argument('--input', type=str, required=True, help="The input data file, store in netcdf format")
 parser.add_argument('--save_dir', type=str, default="")
 parser.add_argument('--num_steps', type=int, nargs="+", default=[20, 20, 20])
 args = parser.parse_args()
-
 
 
 def time_encoding(init_time, total_step, freq=6):
@@ -89,8 +87,10 @@ def run_inference(model_dir, data, num_steps, save_dir=""):
     init_time = pd.to_datetime(data.time.values[-1])
 
     tembs = time_encoding(init_time, total_step)
-    input = data.values[None]
 
+    print(f'init_time: {init_time.strftime(("%Y%m%d-%H"))}')
+    print(f'latitude: {data.lat.values[0]} ~ {data.lat.values[-1]}')
+    input = data.values[None]
     print(f'input: {input.shape}, {input.min():.2f} ~ {input.max():.2f}')
     print(f'tembs: {tembs.shape}, {tembs.mean():.4f}')
 

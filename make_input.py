@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-__all__ = ['make_input']
+__all__ = ['make_input', 'chunk_time']
 
 
 def chunk_time(ds, shape=None):
