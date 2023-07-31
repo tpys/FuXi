@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+__all__ = ['make_input']
+
 
 def chunk_time(ds, shape=None):
     if shape is None:
@@ -27,8 +29,8 @@ def make_input(init_time, data_dir, save_dir, deg=0.25):
     lat = np.linspace(-90, 90, int(180/deg)+1, dtype=np.float32)
     lon = np.arange(0, 360, deg, dtype=np.float32)
 
-    fcst_time = init_time + pd.Timedelta(hours=6) # utc time 
-        
+    valid_time = init_time + pd.Timedelta(hours=6) # utc time 
+
     input = []
     level = []
     for name in pl_names + sfc_names:
@@ -84,14 +86,15 @@ def make_input(init_time, data_dir, save_dir, deg=0.25):
         print(f'{src_name}: {v.min().values:.2f} ~ {v.max().values:.2f}')
 
         v.attrs = {}
-        v = v.rename({'member': 'time', 'dtime': 'step'})
-        v = v.assign_coords(time=[fcst_time]) #
+        v = v.rename({'dtime': 'time'})
+        v = v.squeeze('member').drop('member')
+        v = v.assign_coords(time=[init_time, valid_time])                
         input.append(v)
 
 
     # concat and reshape 
     input = xr.concat(input, "level") 
-    input = input.transpose("time", "step", "level", "lat", "lon")
+    input = input.transpose("time", "level", "lat", "lon")
 
     # reverse latitude 
     input = input.reindex(lat=input.lat[::-1])
@@ -100,16 +103,11 @@ def make_input(init_time, data_dir, save_dir, deg=0.25):
     input = chunk_time(input, input.shape)
 
     # save to nc 
-    save_name = os.path.join(save_dir, fcst_time.strftime("%Y%m%d-%H.nc"))
+    save_name = os.path.join(save_dir, valid_time.strftime("%Y%m%d-%H.nc"))
     input = input.astype(np.float32)
     input.to_netcdf(save_name)
 
 
-
-if __name__ == "__main__":
-    times = pd.date_range('20210101-00', '20211231-00', freq='12H')
-    for init_time in times:
-        make_input(init_time)
 
 
 
