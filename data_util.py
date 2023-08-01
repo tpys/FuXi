@@ -30,7 +30,6 @@ def save_like(output, input, step, save_dir="", freq=6):
         os.makedirs(save_dir, exist_ok=True)
         dtime = (step+2) * freq # 
         init_time = pd.to_datetime(input.time.values[0])
-        print(f'init_time: {init_time}, dtime: {dtime}')
 
         data = xr.DataArray(
             output[None, None],
@@ -60,6 +59,7 @@ def save_like(output, input, step, save_dir="", freq=6):
             ds.append(v)
         ds = xr.merge(ds, compat="no_conflicts")
 
+        print(f'Save to {save_name} ...')
         save_name = os.path.join(save_dir, f'{dtime:03d}.nc')
         ds.to_netcdf(save_name)        
 
