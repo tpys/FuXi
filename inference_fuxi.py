@@ -6,6 +6,8 @@ import xarray as xr
 import pandas as pd
 import onnxruntime as ort
 
+from data_util import save_like
+
 ort.set_default_logger_severity(3)
 
 parser = argparse.ArgumentParser()
@@ -50,39 +52,9 @@ def load_model(model_name):
     return session
 
 
-def load_data(data_file):
-    input = xr.open_dataarray(data_file)
-    return input
-
-
-def save_like(output, data, step, save_dir="", freq=6):
-    if save_dir:
-        os.makedirs(save_dir, exist_ok=True)
-
-        lead_time = (step+1) * freq
-        init_time = pd.to_datetime(data.time.values[-1])
-        fcst_time = init_time + pd.Timedelta(hours=lead_time)
-        
-        output = xr.DataArray(
-            output, # 1 x 70 x 721 x 1440
-            dims=['time', 'level', 'lat', 'lon'],
-            coords=dict(
-                time=[fcst_time],
-                level=data.level,
-                lat=data.lat,
-                lon=data.lon,
-            )
-        )  
-        output.name = 'data'
-        save_name = os.path.join(save_dir, f'{lead_time:03d}.nc')
-        output.to_netcdf(save_name)
-
-
-
 def run_inference(model_dir, data, num_steps, save_dir=""):
     total_step = sum(num_steps)
     init_time = pd.to_datetime(data.time.values[-1])
-
     tembs = time_encoding(init_time, total_step)
 
     print(f'init_time: {init_time.strftime(("%Y%m%d-%H"))}')
