@@ -55,25 +55,22 @@ def load_data(data_file):
     return input
 
 
-def save_like(output, data, step, save_dir="", freq=6, grid=0.25):
+def save_like(output, data, step, save_dir="", freq=6):
     if save_dir:
         os.makedirs(save_dir, exist_ok=True)
 
         lead_time = (step+1) * freq
         init_time = pd.to_datetime(data.time.values[-1])
-
-        lat = np.linspace(-90, 90, int(180/grid)+1, dtype=np.float32)
-        lon = np.arange(0, 360, grid, dtype=np.float32)  
         fcst_time = init_time + pd.Timedelta(hours=lead_time)
-
+        
         output = xr.DataArray(
             output, # 1 x 70 x 721 x 1440
             dims=['time', 'level', 'lat', 'lon'],
             coords=dict(
                 time=[fcst_time],
                 level=data.level,
-                lat=lat,
-                lon=lon,
+                lat=data.lat,
+                lon=data.lon,
             )
         )  
         output.name = 'data'
@@ -90,6 +87,10 @@ def run_inference(model_dir, data, num_steps, save_dir=""):
 
     print(f'init_time: {init_time.strftime(("%Y%m%d-%H"))}')
     print(f'latitude: {data.lat.values[0]} ~ {data.lat.values[-1]}')
+    
+    assert data.lat.values[0] == 90
+    assert data.lat.values[-1] == -90
+
     input = data.values[None]
     print(f'input: {input.shape}, {input.min():.2f} ~ {input.max():.2f}')
     print(f'tembs: {tembs.shape}, {tembs.mean():.4f}')
