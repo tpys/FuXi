@@ -32,7 +32,7 @@ def save_like(output, input, step, save_dir="", input_type="hres", freq=6, split
 
         if input_type.upper() == "HRES":
             dtime = (step+2) * freq
-            
+
         init_time = pd.to_datetime(input.time.values[0])
 
         ds = xr.DataArray(
@@ -63,8 +63,8 @@ def save_like(output, input, step, save_dir="", input_type="hres", freq=6, split
                 new_ds.append(v)
             ds = xr.merge(new_ds, compat="no_conflicts")
 
-        print(f'Save to {save_name} ...')
         save_name = os.path.join(save_dir, f'{dtime:03d}.nc')
+        print(f'Save to {save_name} ...')
         ds.to_netcdf(save_name)
 
 
