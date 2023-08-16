@@ -25,10 +25,15 @@ def split_variable(ds, name):
     return v
 
 
-def save_like(output, input, step, save_dir="", freq=6, split=False):
+def save_like(output, input, step, input_type="hres", save_dir="", freq=6, split=False):
     if save_dir:
         os.makedirs(save_dir, exist_ok=True)
-        dtime = (step+2) * freq # 
+
+        if input_type == "hres":
+            dtime = (step+2) * freq
+        elif input_type == "gfs":
+            dtime = (step+1) * freq 
+
         init_time = pd.to_datetime(input.time.values[0])
 
         ds = xr.DataArray(
