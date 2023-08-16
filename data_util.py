@@ -16,7 +16,7 @@ def split_variable(ds, name):
         v = ds.sel(level=[name])
         v = v.assign_coords(level=[0])
         v = v.rename({"level": "level0"})
-        v = v.transpose('member', 'level0', 'time', 'dtime', 'lat', 'lon')        
+        v = v.transpose('member', 'level0', 'time', 'dtime', 'lat', 'lon')
     elif name in pl_names:
         level = [f'{name}{l}' for l in levels]
         v = ds.sel(level=level)
@@ -25,15 +25,14 @@ def split_variable(ds, name):
     return v
 
 
-def save_like(output, input, step, input_type="hres", save_dir="", freq=6, split=False):
+def save_like(output, input, step, save_dir="", input_type="hres", freq=6, split=False):
     if save_dir:
         os.makedirs(save_dir, exist_ok=True)
+        dtime = (step+1) * freq
 
-        if input_type == "hres":
+        if input_type.upper() == "HRES":
             dtime = (step+2) * freq
-        elif input_type == "gfs":
-            dtime = (step+1) * freq 
-
+            
         init_time = pd.to_datetime(input.time.values[0])
 
         ds = xr.DataArray(
@@ -47,8 +46,8 @@ def save_like(output, input, step, input_type="hres", save_dir="", freq=6, split
                 lat=input.lat.values,
                 lon=input.lon.values,
             )
-        ).astype(np.float32)  
-        
+        ).astype(np.float32)
+
         if split:
             def rename(name):
                 if name == "tp":
@@ -56,7 +55,7 @@ def save_like(output, input, step, input_type="hres", save_dir="", freq=6, split
                 elif name == "r":
                     return "RH"
                 return name.upper()
-            
+
             new_ds = []
             for k in pl_names + sfc_names:
                 v = split_variable(ds, k)
@@ -66,7 +65,7 @@ def save_like(output, input, step, input_type="hres", save_dir="", freq=6, split
 
         print(f'Save to {save_name} ...')
         save_name = os.path.join(save_dir, f'{dtime:03d}.nc')
-        ds.to_netcdf(save_name)        
+        ds.to_netcdf(save_name)
 
 
 def make_input(init_time, data_dir, save_dir, deg=0.25):
@@ -75,7 +74,7 @@ def make_input(init_time, data_dir, save_dir, deg=0.25):
 
     input = []
     level = []
-    
+
     for name in pl_names + sfc_names:
         src_name = '{}_{}'.format(name, init_time.strftime("%Y%m%d%H.nc"))
         src_file = os.path.join(data_dir, src_name)
