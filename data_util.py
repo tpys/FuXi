@@ -25,13 +25,13 @@ def split_variable(ds, name):
     return v
 
 
-def save_like(output, input, step, save_dir="", freq=6):
+def save_like(output, input, step, save_dir="", freq=6, split=False):
     if save_dir:
         os.makedirs(save_dir, exist_ok=True)
         dtime = (step+2) * freq # 
         init_time = pd.to_datetime(input.time.values[0])
 
-        data = xr.DataArray(
+        ds = xr.DataArray(
             output[None, None],
             dims=['member', 'time', 'dtime', 'level', 'lat', 'lon'],
             coords=dict(
@@ -44,20 +44,20 @@ def save_like(output, input, step, save_dir="", freq=6):
             )
         ).astype(np.float32)  
         
-        def rename(name):
-            if name == "tp":
-                return "TP06"
-            elif name == "r":
-                return "RH"
-            return name.upper()
-
-        ds = []
-        for k in pl_names + sfc_names:
-            v = split_variable(data, k)
-            v.name = rename(k)
-            # print(f"{k}: {v.shape} {v.values.min()} ~ {v.values.max()}")
-            ds.append(v)
-        ds = xr.merge(ds, compat="no_conflicts")
+        if split:
+            def rename(name):
+                if name == "tp":
+                    return "TP06"
+                elif name == "r":
+                    return "RH"
+                return name.upper()
+            
+            new_ds = []
+            for k in pl_names + sfc_names:
+                v = split_variable(ds, k)
+                v.name = rename(k)
+                new_ds.append(v)
+            ds = xr.merge(new_ds, compat="no_conflicts")
 
         print(f'Save to {save_name} ...')
         save_name = os.path.join(save_dir, f'{dtime:03d}.nc')
