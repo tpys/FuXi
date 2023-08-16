@@ -51,7 +51,7 @@ pip install -r requirement.txt
 ## Demo
 
 ```bash 
-python inference_fuxi.py --model fuxi --input data/20210101/input.nc
+python inference_fuxi.py --model model_dir --input input_file --num_steps 20
 ```
 
 
