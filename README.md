@@ -51,7 +51,7 @@ pip install -r requirement.txt
 ## Demo
 
 ```bash 
-python inference_fuxi.py --model model_dir --input input_file --num_steps 20
+python inference_fuxi.py --model model_dir --input input_file --num_steps 20 --input_type GFS
 ```
 
 
