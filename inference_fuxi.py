@@ -84,9 +84,6 @@ def run_inference(model_dir, data, num_steps, save_dir=""):
         load_time = time.perf_counter() - start
         print(f'Load model take {load_time:.2f} sec')
 
-        for k, input_name in enumerate(session.get_inputs()):
-            print(k, input_name)
-
         print(f'Inference {stage} ...')
         start = time.perf_counter()
 

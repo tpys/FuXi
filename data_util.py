@@ -106,6 +106,65 @@ def make_era5_input(init_time, data_dir, save_dir):
     ds.to_netcdf(save_name)    
 
 
+def make_era5(init_time, data_dir):
+    import os
+    import numpy as np
+    import pandas as pd
+    import xarray as xr
+    init_time = pd.to_datetime(init_time)
+    print(f"process {init_time} ...")
+
+    pl_file = os.path.join(data_dir, init_time.strftime('P%Y%m%d%H.nc'))
+    pl = xr.open_dataset(pl_file)
+
+    sfc_file = os.path.join(data_dir, init_time.strftime('S%Y%m%d%H.nc'))
+    sfc = xr.open_dataset(sfc_file)
+
+    tp_file = os.path.join(data_dir, init_time.strftime('R%Y%m%d.nc'))
+    tp = xr.open_dataarray(tp_file).fillna(0)
+    tp = tp.rolling(time=6).sum() * 1000
+    tp = tp.sel(time=tp.time[::6])
+    tp = tp.clip(min=0, max=1000)
+    sfc['tp'] = tp
+
+    pl_names = ['z', 't', 'u', 'v', 'r']
+    sfc_names = ['t2m', 'u10', 'v10', 'msl', 'tp']
+    levels = [50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 850, 925, 1000]
+
+    channel = [f'{n.upper()}{l}' for n in pl_names for l in levels]
+    channel +=[n.upper() for n in sfc_names]
+
+    ds = []
+    for name in pl_names + sfc_names:
+        if name in ['z', 't', 'u', 'v', 'r']:
+            v = pl[name]
+
+        if name in ['t2m', 'u10', 'v10', 'msl', 'tp']:
+            v = sfc[name]
+            level = xr.DataArray([1], coords={'level': [1]}, dims=['level'])
+            v = v.expand_dims({'level': level}, axis=1)             
+
+        if np.isnan(v).sum() > 0:
+            print(f"{name} has nan value")
+            raise ValueError
+
+        v.name = "data"
+        v.attrs = {}                
+        print(f"{name}: {v.shape}, {v.min().values} ~ {v.max().values}")
+        ds.append(v)
+     
+    ds = xr.concat(ds, 'level')
+    ds = ds.assign_coords(level=channel)
+    ds = ds.rename({'longitude': 'lon', 'latitude': 'lat'})
+    ds = ds.astype(np.float32)
+    return ds
+    
+# ds12 = make_era5('20230725-12', 'ERA520230725')
+# ds18 = make_era5('20230725-18', 'ERA520230725')
+# ds = xr.concat([ds12, ds18], 'time')
+# ds.to_netcdf('new_input.nc')
+
+
 def make_hres_input(init_time, data_dir, save_dir):
     lat = np.linspace(-90, 90, int(180/degree)+1, dtype=np.float32)
     lon = np.arange(0, 360, degree, dtype=np.float32)
@@ -303,10 +362,15 @@ def test_make_input():
     make_hres_input(init_time, data_dir, save_dir)
 
 
-def test_visualize():
-    ds = xr.open_dataarray('data/HRES/output/072.nc')
-    tp = ds.sel(level='tp')
-    visualize('tp.jpg', [tp], ['tp'], vmin=0, vmax=20)
+def test_visualize(step, data_dir):
+    src_name = os.path.join(data_dir, f"{step:03d}.nc")
+    ds = xr.open_dataarray(src_name).isel(time=0)
+    ds = ds.sel(lon=slice(90, 150), lat=slice(50, 0)) 
+    print(ds)
+    u850 = ds.sel(level='U850', step=step)
+    v850 = ds.sel(level='V850', step=step)
+    ws850 = np.sqrt(u850 ** 2 + v850 ** 2)
+    visualize(f'ws850/{step:03d}.jpg', [ws850], [f'20230725-18+{step:03d}h'], vmin=0, vmax=30)
 
 
 def test_rmse(output_name, target_name):
