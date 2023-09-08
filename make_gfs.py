@@ -89,7 +89,7 @@ def make_gfs(src_name):
         print("Field has nan value")
         return 
     
-    return ds
+    return input
 
 
 
