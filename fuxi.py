@@ -6,20 +6,16 @@ import xarray as xr
 import pandas as pd
 import onnxruntime as ort
 
-from data_util import save_like
+from util import save_like
 
 ort.set_default_logger_severity(3)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, required=True, help="FuXi onnx model dir")
 parser.add_argument('--input', type=str, required=True, help="The input data file, store in netcdf format")
-parser.add_argument('--input_type', type=str, help="The input type", default="ERA5")
 parser.add_argument('--save_dir', type=str, default="")
 parser.add_argument('--num_steps', type=int, nargs="+", default=[20])
 args = parser.parse_args()
-
-
-assert args.input_type.upper() in ["ERA5", "GFS", "HRES"]
 
 
 def time_encoding(init_time, total_step, freq=6):
@@ -91,7 +87,7 @@ def run_inference(model_dir, data, num_steps, save_dir=""):
             temb = tembs[step]
             new_input, = session.run(None, {'input': input, 'temb': temb})
             output = new_input[:, -1] 
-            save_like(output, data, step, save_dir, input_type=args.input_type)
+            save_like(output, data, step, save_dir)
             print(f'stage: {i}, step: {step+1:02d}, output: {output.min():.2f} {output.max():.2f}')
             input = new_input
             step += 1

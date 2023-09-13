@@ -21,10 +21,12 @@ The downloaded files shall be organized as the following hierarchy:
 │   ├── data
 │   │    ├── 20210101
 │   │         ├── input.nc
-│   │         ├── output.nc
-│   │         ├── target.nc
-│   │   
-│   ├── fuxi
+│   │         ├── output
+│   │               ├── 006.nc
+│   │               ├── 012.nc
+│   │               ├── ...
+│   │               ├── 360.nc
+│   ├── model
 │   |    ├── short
 │   |    ├── short.onnx
 │   |    ├── medium
@@ -32,7 +34,11 @@ The downloaded files shall be organized as the following hierarchy:
 │   |    ├── long
 │   |    ├── long.onnx
 |   |   
-│   ├── infernece_fuxi.py
+│   ├── fuxi.py
+│   ├── util.py
+│   ├── make_era5_input.py
+│   ├── make_hres_input.py
+│   ├── make_gfs_input.py
 
 ```
 
@@ -51,7 +57,7 @@ pip install -r requirement.txt
 ## Demo
 
 ```bash 
-python inference_fuxi.py --model model_dir --input input_file --num_steps 20 --input_type GFS
+python fuxi.py --model model_dir --input input_file --num_steps 20 20 20
 ```
 
 
