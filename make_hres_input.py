@@ -4,19 +4,36 @@ import pandas as pd
 import xarray as xr
 
 
+"""
+FuXi模型的输入变量:
+    5个气压层变量: ['Z', 'T', 'U', 'V', 'R'], 
+    每个变量包含13层: [50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 850, 925, 1000], 
+    5个地面变量: ['T2M', 'U10', 'V10', 'MSL', 'TP'];
+    
+注意事项:
+    1. 输入是连续的两个历史时刻, 间隔6小时, 分辨率是0.25; eg: [00, 06]做为输入那么起报时刻是06点;
+    2. Z不是Geopential Height, 是 Geopential;
+    3. 降水是6小时累积单位mm, 第一个时刻的降水可以置0;
+    4. 温度是开尔文单位;
+    5. R表示相对湿度;
+    6. 纬度方向是90 ~ -90;
+    7. 气压层的顺序是从高空到地面50 ~ 1000; eg: Z50, Z100, ... , Z1000;
+    8. 数据中不能有NAN;
+"""
+
 def make_hres_input(init_time, data_dir, save_dir, degree=0.25):
-    lat = np.linspace(-90, 90, int(180/degree)+1, dtype=np.float32)
+    lat = np.linspace(-90, 90, int(180 / degree) + 1, dtype=np.float32)
     lon = np.arange(0, 360, degree, dtype=np.float32)
 
-    pl_names = ['z', 't', 'u', 'v', 'r']
-    sfc_names = ['t2m', 'u10', 'v10', 'msl', 'tp']
+    pl_names = ["z", "t", "u", "v", "r"]
+    sfc_names = ["t2m", "u10", "v10", "msl", "tp"]
     levels = [50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 850, 925, 1000]
-    
+
     input = []
     level = []
 
     for name in pl_names + sfc_names:
-        src_name = '{}_{}'.format(name, init_time.strftime("%Y%m%d%H.nc"))
+        src_name = "{}_{}".format(name, init_time.strftime("%Y%m%d%H.nc"))
         src_file = os.path.join(data_dir, src_name)
 
         if not os.path.exists(src_file):
@@ -45,8 +62,8 @@ def make_hres_input(init_time, data_dir, save_dir, degree=0.25):
         # reverse pressure level
         try:
             if name in pl_names:
-                v = xr.concat([v.sel(level=l) for l in levels], 'level')
-                level.extend([f'{name}{l}' for l in levels])
+                v = xr.concat([v.sel(level=l) for l in levels], "level")
+                level.extend([f"{name}{l}" for l in levels])
         except:
             print("missing pressure level")
             return
@@ -65,11 +82,11 @@ def make_hres_input(init_time, data_dir, save_dir, degree=0.25):
             zero = zero.assign_coords(dtime=[0])
             v = xr.concat([zero, v], "dtime")
 
-        print(f'{src_name}: {v.min().values:.2f} ~ {v.max().values:.2f}')
+        print(f"{src_name}: {v.min().values:.2f} ~ {v.max().values:.2f}")
 
         v.attrs = {}
-        v = v.rename({'dtime': 'time'})
-        v = v.squeeze('member').drop('member')
+        v = v.rename({"dtime": "time"})
+        v = v.squeeze("member").drop("member")
         input.append(v)
 
     # concat and reshape
@@ -81,7 +98,7 @@ def make_hres_input(init_time, data_dir, save_dir, degree=0.25):
     # reverse latitude
     input = input.reindex(lat=input.lat[::-1])
     input = input.assign_coords(level=level)
-    input.name = 'data'
+    input.name = "data"
 
     # save to nc
     print(input)
