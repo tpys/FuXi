@@ -6,6 +6,9 @@ This is the official repository for the FuXi paper.
 [FuXi: A cascade machine learning forecasting system for 15-day global weather forecast
 ](https://arxiv.org/abs/2306.12873)
 
+Published on npj Climate and Atmospheric Science: [FuXi: a cascade machine learning forecasting system for 15-day global weather forecast
+](https://www.nature.com/articles/s41612-023-00512-1)
+
 by Lei Chen, Xiaohui Zhong, Feng Zhang, Yuan Cheng, Yinghui Xu, Yuan Qi, Hao Li
 
 
