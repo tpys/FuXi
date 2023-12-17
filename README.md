@@ -15,33 +15,26 @@ by Lei Chen, Xiaohui Zhong, Feng Zhang, Yuan Cheng, Yinghui Xu, Yuan Qi, Hao Li
 
 ## Installation
 
-The Google Drive folder contains the FuXi model, code, and sample input data, all of which are essential resources for this study. Access to these resources is restricted by a password-protected link. To obtain the password, users must complete the provided [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSfjwZLf6PmxRvRhIPMQ1WRLJ98iLxOq_0dXb87N8CFNPyYAGg/viewform?usp=sharing). For inquiries regarding the password, please contact Professor Li Hao at the email address: lihao_lh@fudan.edu.cn.
+The Zenodo link (10.5281/zenodo.10396625) contains the FuXi model, and sample input and output data, all of which are essential resources for this study. For inquiries regarding having any kind of collaboration, please contact Professor Li Hao at the email address: lihao_lh@fudan.edu.cn.
 
 The downloaded files shall be organized as the following hierarchy:
 
 ```plain
-├── root
-│   ├── data
-│   │    ├── 20210101
-│   │         ├── input.nc
-│   │         ├── output
-│   │               ├── 006.nc
-│   │               ├── 012.nc
-│   │               ├── ...
-│   │               ├── 360.nc
-│   ├── model
-│   |    ├── short
-│   |    ├── short.onnx
-│   |    ├── medium
-│   |    ├── medium.onnx
-│   |    ├── long
-│   |    ├── long.onnx
-|   |   
-│   ├── fuxi.py
-│   ├── util.py
-│   ├── make_era5_input.py
-│   ├── make_hres_input.py
-│   ├── make_gfs_input.py
+├──FuXi_EC
+│   ├── short
+│   ├── short.onnx
+│   ├── medium
+│   ├── medium.onnx
+│   ├── long
+│   ├── long.onnx
+
+Sample_Data
+│   ├── output --> FuXi model generated output data, only T+6 forecasts, T is the forecast initialization time
+│   ├── 20231012-06_input_grib.nc --> FuXi model input data generated using the grib files of ECMWF HRES data
+│   ├── 20231012-06_input_netcdf.nc --> FuXi model input data generated using the netcf files of ECMWF HRES data
+│   ├── hres_input_grib_raw.zip --> the grib files of ECMWF HRES data
+│   ├── hres_input_netcdf_raw.zip --> the netcdf files of ECMWF HRES data
+│   ├── make_hres_input_public_version.py --> the script used to generate input data from either the grib or netcdf files of ECMWF HRES data
 
 ```
 
