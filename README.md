@@ -15,7 +15,7 @@ by Lei Chen, Xiaohui Zhong, Feng Zhang, Yuan Cheng, Yinghui Xu, Yuan Qi, Hao Li
 
 ## Installation
 
-The Baidu disk (https://pan.baidu.com/s/1PDeb-nwUprYtu9AKGnWnNw?pwd=fuxi) contains the FuXi model, and sample input and output data, all of which are essential resources for this study. For inquiries regarding having any kind of collaboration, please contact Professor Li Hao at the email address: lihao_lh@fudan.edu.cn.
+Both Zenodo (https://doi.org/10.5281/zenodo.10401602) and Baidu disk (https://pan.baidu.com/s/1PDeb-nwUprYtu9AKGnWnNw?pwd=fuxi) contain the FuXi model, and sample input and output data, all of which are essential resources for this study. For inquiries regarding having any kind of collaboration, please contact Professor Li Hao at the email address: lihao_lh@fudan.edu.cn.
 
 The downloaded files shall be organized as the following hierarchy:
 
