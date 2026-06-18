@@ -1,5 +1,10 @@
 ## FuXi
 
+> **🆕 FuXi-2.1 is out.** A new global, deterministic forecast model that produces much
+> sharper, more detailed predictions — resolving extreme rain and wind that earlier
+> models blur away — while keeping RMSE comparable to FuXi-1.0.
+> **Model card & weights:** https://huggingface.co/tpys/fuxi-2.1
+> **Collection (FuXi Single):** https://huggingface.co/collections/tpys/fuxi-single-6a33914876e339265df39ff6
 
 This is the official repository for the FuXi paper.
 
